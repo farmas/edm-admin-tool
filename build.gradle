@@ -16,6 +16,7 @@ plugins {
 
 group = 'edu.uw.edm'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
 
 apply plugin: "com.jfrog.artifactory"
 apply plugin: 'java'
