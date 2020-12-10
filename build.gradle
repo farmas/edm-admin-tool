@@ -45,11 +45,7 @@ test {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
-
-            groupId = 'edu.uw.edm'
-            artifactId = jar.baseName
-            version = '0.0.1-SNAPSHOT'
+            artifact bootJar
         }
     }
 }
