@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <p th:text="'Hello, ' + ${name} + '!'" />
+
+
+
+    <div id="app">
+      {{ message }}
+      <ul>
+        <li v-for="todo in todos">
+        {{ todo }}
+        </li>
+    </ul>
+
+    </div>
+    <script>
+      var app = new Vue({
+        el: '#app',
+        data: {
+          message: 'Hello Vue!',
+          todos: []
+        }
+      });
+
+      axios.get('/api/test')
+        .then(function (response) {
+          // handle success
+          app.todos = response.data;
+          console.log(response);
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+        .then(function () {
+          // always executed
+        });
+    </script>
+</body>
+</html>
