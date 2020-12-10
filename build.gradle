@@ -46,6 +46,23 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+
+            artifactId = jar.baseName
+
+            groupId = 'edu.uw.edm'
+
+            // Set the parent so that the pom we get is valid -- otherwise we don't have any version numbers
+            // for the Spring dependencies
+            pom.withXml {
+                asNode().appendNode('parent')
+                        .appendNode('groupId', 'org.springframework.boot').parent()
+                        .appendNode('artifactId', 'spring-boot-starter-parent').parent()
+                        .appendNode('version', "2.4.0")
+
+                asNode().appendNode('repositories').appendNode('repository')
+                        .appendNode('id', 'spring-releases').parent()
+                        .appendNode('url', 'https://repo.spring.io/libs-release')
+            }
         }
     }
 }
