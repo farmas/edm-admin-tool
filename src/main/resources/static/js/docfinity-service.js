@@ -1,7 +1,7 @@
 import * as mockData from './docfinity-data.js';
 
-const docFinityUrl = '/edm-admin-ui/admin-tools/content/user-info?docfinity=true';
-const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+const docFinityUrl = '/api/docfinity';
+const isLocal = window.location.search.indexOf('mock') >= 0;
 
 function makeDocFinityRequest(url, method) {
   return new Promise((resolve, reject) => {
@@ -10,13 +10,13 @@ function makeDocFinityRequest(url, method) {
       contentType: "application/json; charset=utf-8",
       type: 'POST',
       url: docFinityUrl,
-      data: JSON.stringify({ url, method: method || 'GET' }),
+      data: JSON.stringify({ urlPath: url, method: method || 'GET' }),
       success: (response) => {
-        console.log(response)
+        console.log(url, response)
         resolve(response);
       },
       error: (jqXHR, textStatus, errorThrown) => {
-        console.log('error', textStatus, errorThrown);
+        console.log('[Error]', url, textStatus, errorThrown);
         reject(textStatus);
       }
     });

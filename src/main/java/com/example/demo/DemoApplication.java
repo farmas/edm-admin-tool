@@ -2,6 +2,8 @@ package com.example.demo;
 
 import java.time.Duration;
 
+import com.example.demo.properties.DocFinityProperties;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
