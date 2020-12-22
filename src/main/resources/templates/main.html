@@ -1,0 +1,187 @@
+<html lang="en">
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="./css/main.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">EDM Admin UI</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault"
+          aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown"
+                aria-expanded="false">{{selectedCustomer.name}}</a>
+              <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                <li v-for="customer in customers">
+                  <a class="dropdown-item" :class="{active: selectedCustomer.name === customer.name}" href="#"
+                    v-on:click="selectCustomer(customer.name)">{{customer.name}}</a>
+                </li>
+                <li class="dropdown-divider">
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" v-on:click="addCustomer">Create New Customer...</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container">
+      <div class="row">
+        <div class="col">
+          <input type="text" class="form-control" placeholder="Customer" v-model="selectedCustomer.name">
+        </div>
+        <div class="col">
+          <select class="form-select" v-model="selectedDocumentSet">
+            <option v-for="documentSet in selectedCustomer.documentSets" v-bind:value="documentSet">{{documentSet.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <h3>Metadata</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Required</th>
+              <th scope="col">Editable</th>
+              <th scope="col">Data Source</th>
+              <th scope="col">Validators</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(field, index) in selectedDocumentSet.fields">
+              <td>{{field.name}}</td>
+              <td><i class="material-icons" v-if="field.required">check</i></td>
+              <td><i class="material-icons" v-if="field.editable">check</i></td>
+              <td>{{field.datasource}}</td>
+              <td>{{field.validators}}</td>
+              <td>
+                <button type="button" class="btn btn-outline-secondary" disabled>
+                  <i class="material-icons">create</i>
+                </button>
+                <button type="button" class="btn btn-outline-danger" v-on:click="deleteField(index)">
+                  <i class="material-icons">delete</i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input class="form-control" type="text" placeholder="New Metadata" v-model="newField.name">
+              </td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="newCheckRequired" v-model="newField.required">
+                  <label class="form-check-label" for="newCheckRequired">
+                    Required
+                  </label>
+                </div>
+              </td>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="newCheckEditable" v-model="newField.editable">
+                  <label class="form-check-label" for="newCheckEditable">
+                    Editable
+                  </label>
+                </div>
+              </td>
+              <td></td>
+              <td></td>
+              <td>
+                <button type="button" class="btn btn-outline-primary" v-on:click="addField"
+                  :disabled=isAddFieldDisabled>
+                  <i class="material-icons">add</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-5">
+        <h3>
+          Document Types
+          <button class="btn btn-success" v-on:click="validateDocumentTypes">Validate</button>
+        </h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Document Type</th>
+              <th scope="col">Category</th>
+              <th scope="col">Retention Policy</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(docType, index) in selectedDocumentSet.documentTypes" :class="'table-' + docType.status">
+              <td>{{docType.name}}</td>
+              <td>{{docType.category}}</td>
+              <td>{{docType.retention}}</td>
+              <td>
+                <button type="button" class="btn btn-outline-secondary" disabled>
+                  <i class="material-icons">create</i>
+                </button>
+                <button type="button" class="btn btn-outline-danger" v-on:click="deleteDocumentType(index)">
+                  <i class="material-icons">delete</i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input class="form-control" type="text" placeholder="New Document Type" v-model="newDocumentType.name">
+              </td>
+              <td>
+                <select class="form-select" v-model="newDocumentType.category">
+                  <option></option>
+                  <option v-for="category in categories">{{category.name}}</option>
+                </select>
+              </td>
+              <td>
+                <select class="form-select" v-model="newDocumentType.retention">
+                  <option></option>
+                  <option v-for="retention in retentions">{{retention}}</option>
+                </select>
+              </td>
+              <td>
+                <button type="button" class="btn btn-outline-primary" v-on:click="addDocumentType"
+                  :disabled=isAddDocTypeDisabled>
+                  <i class="material-icons">add</i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+  <script type="module">
+    import {createVueApp} from './js/main.js';
+    createVueApp();
+  </script>
+</body>
+
+</html>
