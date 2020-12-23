@@ -1,6 +1,6 @@
 import * as mockData from './docfinity-data.js';
 
-const docFinityUrl = '/api/docfinity';
+const docFinityUrl = window.location.pathname + 'api/docfinity';
 const isLocal = window.location.search.indexOf('mock') >= 0;
 
 function makeDocFinityRequest(url, method) {
